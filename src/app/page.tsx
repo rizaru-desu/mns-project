@@ -52,9 +52,9 @@ export default function Page() {
         </Flex>
 
         <Tabs
-          className="w-1/3"
+          className="w-[90%] md:w-1/3 lg:w-1/3 xl:w-1/3"
           animated
-          size="large"
+          size="small"
           type="card"
           items={[
             {
