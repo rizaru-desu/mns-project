@@ -46,8 +46,10 @@ export default function Page() {
             className="!w-12 !h-12 mx-5"
           />
           <Flex vertical>
-            <Title>NMS Monitoring</Title>
-            <Text type="secondary">ZABBIX & PRTG Monitoring Tools</Text>
+            <span className="text-2xl font-black">NMS Monitoring</span>
+            <Text type="secondary" className="text-md">
+              ZABBIX & PRTG Monitoring Tools
+            </Text>
           </Flex>
         </Flex>
 
