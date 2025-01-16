@@ -32,7 +32,7 @@ type FieldRegisterType = {
 };
 
 const { Content, Footer } = Layout;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function Page() {
   return (
