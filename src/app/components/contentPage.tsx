@@ -2,9 +2,9 @@ import React from "react";
 import { Avatar, Badge, Button, Flex, Image, Layout, Menu, theme } from "antd";
 import { RiMenuFoldFill, RiMenuUnfoldFill } from "react-icons/ri";
 import { AiFillDashboard } from "react-icons/ai";
-import { FaCartArrowDown, FaUserGear } from "react-icons/fa6";
-import { FaBell, FaPowerOff, FaUser } from "react-icons/fa";
+import { FaBell, FaPowerOff, FaSitemap, FaUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { HiDocumentText } from "react-icons/hi";
 const { Sider, Header, Content } = Layout;
 
 interface ContentPageProps {
@@ -84,7 +84,7 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
             },
             {
               key: "/pages/item-list",
-              icon: <FaCartArrowDown />,
+              icon: <FaSitemap />,
               label: "Item List",
               children: [
                 {
@@ -105,7 +105,7 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
             },
             {
               key: "/pages/report",
-              icon: <FaUserGear />,
+              icon: <HiDocumentText />,
               label: "Report",
               children: [
                 {
