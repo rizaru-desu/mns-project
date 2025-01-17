@@ -3,7 +3,7 @@ import { Avatar, Badge, Button, Flex, Image, Layout, Menu, theme } from "antd";
 import { RiMenuFoldFill, RiMenuUnfoldFill } from "react-icons/ri";
 import { AiFillDashboard } from "react-icons/ai";
 import { FaBell, FaPowerOff, FaSitemap, FaUser } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { HiDocumentText } from "react-icons/hi";
 const { Sider, Header, Content } = Layout;
 
@@ -59,7 +59,7 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
         </Flex>
         <Menu
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[usePathname()]}
           items={[
             {
               key: "/pages/dashboard",
@@ -83,22 +83,22 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
               ],
             },
             {
-              key: "/pages/item-list",
+              key: "/pages/items-list",
               icon: <FaSitemap />,
               label: "Item List",
               children: [
                 {
-                  key: "/pages/item-list/zabbix",
+                  key: "/pages/items-list/zabbix",
                   label: "ZABBIX",
                   onClick: () => {
-                    router.replace("/pages/item-list/zabbix");
+                    router.replace("/pages/items-list/zabbix");
                   },
                 },
                 {
-                  key: "/pages/item-list/prtg",
+                  key: "/pages/items-list/prtg",
                   label: "PRTG",
                   onClick: () => {
-                    router.replace("/pages/item-list/prtg");
+                    router.replace("/pages/items-list/prtg");
                   },
                 },
               ],

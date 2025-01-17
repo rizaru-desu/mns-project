@@ -11,6 +11,7 @@ import {
   Typography,
   Space,
 } from "antd";
+import { useRouter } from "next/navigation";
 import { FaUserAlt } from "react-icons/fa";
 import { FaLock } from "react-icons/fa6";
 
@@ -35,6 +36,7 @@ const { Content, Footer } = Layout;
 const { Text } = Typography;
 
 export default function Page() {
+  const route = useRouter();
   return (
     <Layout className="min-h-screen flex flex-col">
       <Content className="flex-1 flex flex-col items-center justify-center bg-[url('/image/bg.png')] bg-contain bg-center bg-no-repeat">
@@ -68,6 +70,10 @@ export default function Page() {
                   style={{ maxWidth: 600 }}
                   initialValues={{ remember: true }}
                   autoComplete="off"
+                  onFinish={(values) => {
+                    console.log(values);
+                    route.replace("/pages/dashboard/zabbix");
+                  }}
                 >
                   <Form.Item<FieldLoginType>
                     name="username"
