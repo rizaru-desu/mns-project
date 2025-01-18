@@ -1,34 +1,108 @@
 "use client";
 
 import ContentPage from "@/app/components/contentPage";
-import { Button, Card, Divider, Statistic, Input } from "antd";
-import { DataGridPremium } from "@mui/x-data-grid-premium";
-import { PieChart } from "@mui/x-charts/PieChart";
-import { styled } from "@mui/material/styles";
-import { useDrawingArea } from "@mui/x-charts-pro";
+import { Button, Card, Divider, Statistic, Input, Table } from "antd";
+import type { TableProps } from "antd";
+import Chart from "react-apexcharts";
+
+type ColumnsType<T extends object> = TableProps<T>["columns"];
 
 const { Search } = Input;
 
-const StyledText = styled("text")(({ theme }) => ({
-  fill: theme.palette.text.primary,
-  textAnchor: "middle",
-  dominantBaseline: "central",
-  fontSize: 20,
-}));
+interface DataTypeSummary {
+  key: string;
+  totalDevice: number;
+  client: string;
+  triger: number;
+  unresolved: number;
+}
 
-function PieCenterLabel({ children }: { children: React.ReactNode }) {
-  const { width, height, left, top } = useDrawingArea();
-  return (
-    <StyledText x={left + width / 2} y={top + height / 2}>
-      {children}
-    </StyledText>
-  );
+interface DataTypeSummaryClient {
+  key: string;
+  time: Date;
+  client: string;
+  host: string;
+  problem: string;
 }
 
 export default function Page() {
+  const columnsSummary: ColumnsType<DataTypeSummary> = [
+    {
+      title: "Total Device",
+      dataIndex: "totalDevice",
+      key: "totalDevice",
+      sorter: (a, b) => a.totalDevice - b.totalDevice,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Client",
+      dataIndex: "client",
+      key: "client",
+      sorter: (a, b) => a.client.length - b.client.length,
+      sortDirections: ["descend", "ascend"],
+      filterSearch: true,
+      filters: [],
+      onFilter: (value, record) => record.client.startsWith(value as string),
+    },
+    {
+      title: "Triger",
+      dataIndex: "triger",
+      key: "triger",
+      sorter: (a, b) => a.triger - b.triger,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Unresolved",
+      dataIndex: "unresolved",
+      key: "unresolved",
+      sorter: (a, b) => a.unresolved - b.unresolved,
+      sortDirections: ["descend", "ascend"],
+    },
+  ];
+
+  const columnsSummaryClient: ColumnsType<DataTypeSummaryClient> = [
+    {
+      title: "Time",
+      dataIndex: "time",
+      key: "time",
+      sorter: (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Client",
+      dataIndex: "client",
+      key: "client",
+      sorter: (a, b) => a.client.length - b.client.length,
+      sortDirections: ["descend", "ascend"],
+      filterSearch: true,
+      filters: [],
+      onFilter: (value, record) => record.client.startsWith(value as string),
+    },
+    {
+      title: "Host",
+      dataIndex: "host",
+      key: "host",
+      sorter: (a, b) => a.host.length - b.host.length,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Problem",
+      dataIndex: "problem",
+      key: "problem",
+      sorter: (a, b) => a.problem.length - b.problem.length,
+      sortDirections: ["descend", "ascend"],
+    },
+  ];
+
+  const options = {
+    labels: ["A", "B", "C", "D", "E"], // Correctly specify labels in options
+  };
+
+  const series = [44, 55, 41, 17, 15]; // Numerical data for the chart
+
   return (
     <ContentPage>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 grid-rows-1 gap-4 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 grid-rows-1 gap-4 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8">
         <div>
           <Card bordered={false} className="flex flex-col gap-5">
             <Statistic
@@ -97,17 +171,14 @@ export default function Page() {
             className="flex flex-col"
             title="Status Summary"
           >
-            <div style={{ height: 400, width: "100%" }}>
-              <DataGridPremium
-                rows={[]}
-                columns={[
-                  { field: "col1", headerName: "Total Devices", width: 150 },
-                  { field: "col2", headerName: "Client", width: 150 },
-                  { field: "col3", headerName: "Trigger", width: 150 },
-                  { field: "col4", headerName: "Unresolved", width: 150 },
-                ]}
-              />
-            </div>
+            <Table<DataTypeSummary>
+              columns={columnsSummary}
+              bordered
+              scroll={{ x: true }}
+              dataSource={[]}
+              size="small"
+              pagination={{ position: ["bottomRight"] }}
+            />
           </Card>
         </div>
         <div>
@@ -122,23 +193,13 @@ export default function Page() {
               className="w-32"
             />
             <div className="flex justify-center items-center my-5">
-              <PieChart
-                series={[
-                  {
-                    data: [
-                      { value: 5, label: "A" },
-                      { value: 10, label: "B" },
-                      { value: 15, label: "C" },
-                      { value: 20, label: "D" },
-                    ],
-                    innerRadius: 80,
-                  },
-                ]}
-                height={250}
-                width={500}
-              >
-                <PieCenterLabel>Serverity</PieCenterLabel>
-              </PieChart>
+              <Chart
+                options={options}
+                series={series}
+                type="donut"
+                width="380"
+                height="300"
+              />
             </div>
           </Card>
         </div>
@@ -152,14 +213,13 @@ export default function Page() {
             title="Status Summary"
           >
             <div style={{ height: 500, width: "100%" }}>
-              <DataGridPremium
-                rows={[]}
-                columns={[
-                  { field: "col1", headerName: "Times", width: 250 },
-                  { field: "col2", headerName: "Client", width: 250 },
-                  { field: "col3", headerName: "Host", width: 250 },
-                  { field: "col4", headerName: "Problem", width: 250 },
-                ]}
+              <Table<DataTypeSummaryClient>
+                columns={columnsSummaryClient}
+                bordered
+                scroll={{ x: true }}
+                dataSource={[]}
+                size="small"
+                pagination={{ position: ["bottomRight"] }}
               />
             </div>
           </Card>

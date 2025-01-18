@@ -1,7 +1,7 @@
 "use client";
 
 import ContentPage from "@/app/components/contentPage";
-import { Card, Avatar, List } from "antd";
+import { Card, Avatar, List, Skeleton } from "antd";
 import { GaugeComponent } from "react-gauge-component";
 
 const data = Array.from({ length: 23 }).map((_, i) => ({
@@ -14,7 +14,9 @@ export default function Page() {
     <ContentPage>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 grid-rows-1 gap-4 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8">
         <div>
-          <Card title="Status" bordered={false}></Card>
+          <Card title="Status" bordered={false}>
+            <Skeleton active paragraph={{ rows: 1 }} />
+          </Card>
         </div>
 
         <div>
