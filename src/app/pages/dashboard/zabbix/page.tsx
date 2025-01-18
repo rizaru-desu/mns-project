@@ -1,13 +1,11 @@
 "use client";
-
+import React from "react";
 import ContentPage from "@/app/components/contentPage";
-import { Button, Card, Divider, Statistic, Input, Table } from "antd";
+import { Button, Card, Divider, Statistic, Table } from "antd";
 import type { TableProps } from "antd";
-import Chart from "react-apexcharts";
+import { Chart } from "react-google-charts";
 
 type ColumnsType<T extends object> = TableProps<T>["columns"];
-
-const { Search } = Input;
 
 interface DataTypeSummary {
   key: string;
@@ -24,6 +22,18 @@ interface DataTypeSummaryClient {
   host: string;
   problem: string;
 }
+
+const data = [
+  ["Severity", "Count"],
+  ["Critical", 5],
+  ["High", 10],
+  ["Medium", 15],
+  ["Low", 20],
+];
+const options = {
+  pieHole: 0.4,
+  is3D: false,
+};
 
 export default function Page() {
   const columnsSummary: ColumnsType<DataTypeSummary> = [
@@ -94,12 +104,6 @@ export default function Page() {
     },
   ];
 
-  const options = {
-    labels: ["A", "B", "C", "D", "E"], // Correctly specify labels in options
-  };
-
-  const series = [44, 55, 41, 17, 15]; // Numerical data for the chart
-
   return (
     <ContentPage>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 grid-rows-1 gap-4 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8">
@@ -168,12 +172,11 @@ export default function Page() {
         <div>
           <Card
             bordered={false}
-            className="flex flex-col"
+            className="flex flex-col h-full"
             title="Status Summary"
           >
             <Table<DataTypeSummary>
               columns={columnsSummary}
-              bordered
               scroll={{ x: true }}
               dataSource={[]}
               size="small"
@@ -184,23 +187,16 @@ export default function Page() {
         <div>
           <Card
             bordered={false}
-            className="flex flex-col gap-5 h-full"
+            className="flex flex-col h-full"
             title="Summary Problem by Severity"
           >
-            <Search
-              placeholder="input search text"
-              onSearch={() => {}}
-              className="w-32"
+            <Chart
+              chartType="PieChart"
+              width="100%"
+              height="400px"
+              data={data}
+              options={options}
             />
-            <div className="flex justify-center items-center my-5">
-              <Chart
-                options={options}
-                series={series}
-                type="donut"
-                width="380"
-                height="300"
-              />
-            </div>
           </Card>
         </div>
       </div>
@@ -215,7 +211,6 @@ export default function Page() {
             <div style={{ height: 500, width: "100%" }}>
               <Table<DataTypeSummaryClient>
                 columns={columnsSummaryClient}
-                bordered
                 scroll={{ x: true }}
                 dataSource={[]}
                 size="small"
