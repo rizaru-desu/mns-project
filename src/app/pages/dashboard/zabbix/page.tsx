@@ -4,6 +4,10 @@ import ContentPage from "@/app/components/contentPage";
 import { Button, Card, Divider, Statistic, Table } from "antd";
 import type { TableProps } from "antd";
 import { Chart } from "react-google-charts";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryStringMap } from "@/controller/dashboardQuery";
+import Swal from "sweetalert2";
 
 type ColumnsType<T extends object> = TableProps<T>["columns"];
 
@@ -36,6 +40,28 @@ const options = {
 };
 
 export default function Page() {
+  const { data: session } = useSession();
+
+  const {
+    data: dataStringMap,
+    isLoading: isLoadingStringMap,
+    isError: isErrorStringMap,
+    error: errorStringMap,
+  } = useQuery({
+    queryKey: ["dataUser"],
+    queryFn: async () => await getQueryStringMap(),
+    enabled: !!session?.user,
+  });
+
+  if (isErrorStringMap) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: errorStringMap.message,
+      showConfirmButton: true,
+    });
+  }
+
   const columnsSummary: ColumnsType<DataTypeSummary> = [
     {
       title: "Total Device",
@@ -103,6 +129,8 @@ export default function Page() {
       sortDirections: ["descend", "ascend"],
     },
   ];
+
+  const userAdmin = true;
 
   return (
     <ContentPage>

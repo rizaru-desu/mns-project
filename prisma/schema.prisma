@@ -1,14 +1,133 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+ 
+generator client {
+  provider = "prisma-client-js"
+}
+ 
+model User {
+  id              String          @id @default(uuid())
+  name            String?
+  email           String          @unique
+  username        String          @unique
+  password        String
+  phone           String
+  emailVerified   DateTime?
+  OTPVerified   DateTime?
+  image           String?
+  isActive        Boolean @default(true)
+  isAdmin         Boolean @default(false)
+  zabbixGroupId   String?
+
+  
+
+  accounts        Account[]
+  sessions        Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String   @default("System")
+  updatedBy String   @default("System") 
+}
+ 
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([provider, providerAccountId])
+}
+ 
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@id([identifier, token])
+}
+ 
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([userId, credentialID])
+}
+
+model Totp {
+  email     String @id @unique
+  secret    String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String   @default("System")
+  updatedBy String   @default("System") 
+}
+
+model Menu {
+  menuId    String @id @default(uuid())
+  name      String
+  path      String
+  icon      String? // React icon name (e.g., "MdDashboard")
+  isAdmin   Boolean // Restrict to admins
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String   @default("System")
+  updatedBy String   @default("System") 
+
+  parentId  String?  // This will reference the parent menu, if any
+  parent    Menu?    @relation("SubMenus", fields: [parentId], references: [menuId])
+  children  Menu[]   @relation("SubMenus")
+
+  
+}
+
+
+model StringMap {
+  stringMapId String @id @default(uuid())
+  objectCategory String?
+  objectName    String?
+  value       Int
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String   @default("System")
+  updatedBy String   @default("System") 
 }

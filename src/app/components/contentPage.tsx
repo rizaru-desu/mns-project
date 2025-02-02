@@ -1,22 +1,57 @@
 import React from "react";
-import { Avatar, Badge, Button, Flex, Image, Layout, Menu, theme } from "antd";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Flex,
+  Image,
+  Layout,
+  Menu,
+  Skeleton,
+  theme,
+} from "antd";
 import { RiMenuFoldFill, RiMenuUnfoldFill } from "react-icons/ri";
-import { AiFillDashboard } from "react-icons/ai";
-import { FaBell, FaPowerOff, FaSitemap, FaUser } from "react-icons/fa";
+import { FaBell, FaPowerOff, FaUser } from "react-icons/fa";
+import * as MdIcons from "react-icons/md";
 import { useRouter, usePathname } from "next/navigation";
-import { HiDocumentText } from "react-icons/hi";
+import { logout } from "@/action/auth.action";
+import { useSession } from "next-auth/react";
+import type { MenuProps } from "antd";
+import { getQueryMenu } from "@/controller/menuQuery";
+import _ from "lodash";
+import { useQuery } from "@tanstack/react-query";
+
 const { Sider, Header, Content } = Layout;
 
 interface ContentPageProps {
   children: React.ReactNode;
 }
 
+async function dbMenus({ userId }: { userId?: string }) {
+  return await getQueryMenu({ id: userId });
+}
+
 const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+
   const [collapsed, setCollapsed] = React.useState(false);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  // Queries
+  const { data, isLoading } = useQuery({
+    queryKey: ["listMenus"],
+    queryFn: async () => await dbMenus({ userId: session?.user?.id }),
+    enabled: !!session?.user,
+  });
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    router.push(e.key);
+  };
 
   return (
     <Layout hasSider>
@@ -26,12 +61,8 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
         breakpoint="md"
         collapsedWidth="80"
         collapsed={collapsed}
-        onBreakpoint={(broken) => {
-          console.log(broken);
-        }}
-        onCollapse={(collapsed, type) => {
+        onCollapse={(collapsed) => {
           setCollapsed(collapsed);
-          console.log(collapsed, type);
         }}
         style={{
           overflow: "auto",
@@ -48,7 +79,7 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
         <Flex align="center" className="my-3" justify="center">
           <Image
             preview={false}
-            src="/image/molecule.png"
+            src="/image/logo.png"
             alt="logo"
             className="!w-5 !h-5 mx-2"
           />
@@ -57,81 +88,42 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
             <span className="text-xs font-bold">NMS Monitoring</span>
           )}
         </Flex>
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={[usePathname()]}
-          items={[
-            {
-              key: "/pages/dashboard",
-              icon: <AiFillDashboard />,
-              label: "Dashboard",
-              children: [
-                {
-                  key: "/pages/dashboard/zabbix",
-                  label: "ZABBIX",
-                  onClick: () => {
-                    router.replace("/pages/dashboard/zabbix");
-                  },
-                },
-                {
-                  key: "/pages/dashboard/prtg",
-                  label: "PRTG",
-                  onClick: () => {
-                    router.replace("/pages/dashboard/prtg");
-                  },
-                },
-              ],
-            },
-            {
-              key: "/pages/items-list",
-              icon: <FaSitemap />,
-              label: "Item List",
-              children: [
-                {
-                  key: "/pages/items-list/zabbix",
-                  label: "ZABBIX",
-                  onClick: () => {
-                    router.replace("/pages/items-list/zabbix");
-                  },
-                },
-                {
-                  key: "/pages/items-list/prtg",
-                  label: "PRTG",
-                  onClick: () => {
-                    router.replace("/pages/items-list/prtg");
-                  },
-                },
-              ],
-            },
-            {
-              key: "/pages/report",
-              icon: <HiDocumentText />,
-              label: "Report",
-              children: [
-                {
-                  key: "/pages/report/zabbix",
-                  label: "ZABBIX",
-                  onClick: () => {
-                    router.replace("/pages/report/zabbix");
-                  },
-                },
-                {
-                  key: "/pages/report/prtg",
-                  label: "PRTG",
-                  onClick: () => {
-                    router.replace("/pages/report/prtg");
-                  },
-                },
-              ],
-            },
-          ]}
-        />
+
+        {isLoading && (
+          <Flex align="center" className="px-3" justify="center">
+            <Skeleton active paragraph={{ rows: 10 }} />
+          </Flex>
+        )}
+
+        {data && (
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={[pathname]}
+            items={_.map(data, (item) => ({
+              key: item.path,
+              icon: item.icon
+                ? React.createElement(
+                    MdIcons[item.icon as keyof typeof MdIcons]
+                  )
+                : null,
+              label: item.name,
+
+              children: _.isEmpty(item.children)
+                ? undefined
+                : _.map(item.children, (child) => ({
+                    key: child.path,
+                    label: child.name,
+                  })),
+            }))}
+            onClick={onClick}
+          />
+        )}
       </Sider>
 
       <Layout style={{ marginInlineStart: collapsed ? 80 : 200 }}>
         <Header
-          className="flex flex-row justify-between "
-          style={{ padding: 0, background: "#001529" }}
+          className="flex flex-row justify-between bg-[#21B198]"
+          style={{ padding: 0 }}
         >
           <Button
             type="text"
@@ -151,7 +143,9 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
 
             <Avatar style={{ backgroundColor: "#87d068" }} icon={<FaUser />} />
 
-            <span className="text-md text-white font-bold">Developer</span>
+            <span className="text-md text-white font-bold">
+              {session?.user?.name}
+            </span>
 
             <Button
               type="text"
@@ -162,7 +156,9 @@ const ContentPage: React.FC<ContentPageProps> = ({ children }) => {
                 width: 64,
                 height: 64,
               }}
-              onClick={async () => {}}
+              onClick={async () => {
+                await logout();
+              }}
             />
           </div>
         </Header>

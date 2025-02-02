@@ -1,0 +1,21 @@
+1. dashboard admin panel 
+1.1. Show Table Group Host naated array
+1.2. select host Id
+1.3. Show Dashboaard panel by host id
+
+2. dashboard user panel
+2.1. Select Host Id
+2.2. Show Dashbord pannel by host id
+
+3. Item-List admin panel
+1.1. Show Table Group Host naated array
+1.2. select host Id
+1.3. Show item-list panel by host id
+
+4. Item-List user panel
+2.1. Select Host Id
+2.2. Show item-list pannel by host id
+
+
+
+SLA, Problems, Traffic

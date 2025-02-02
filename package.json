@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
+    "@tanstack/react-query": "^5.64.2",
+    "@tanstack/react-query-devtools": "^5.64.2",
     "antd": "^5.23.1",
     "antd-phone-input": "^0.2.2",
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "next": "14.2.23",
@@ -22,15 +26,23 @@
     "react-google-charts": "^5.2.1",
     "react-icons": "^5.4.0",
     "react-phone-input-2": "^2.15.1",
-    "swr": "^2.3.0"
+    "speakeasy": "^2.0.0",
+    "sweetalert2": "^11.15.10",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/lodash": "^4.17.14",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.17",
+    "@types/qrcode-terminal": "^0.12.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/speakeasy": "^2.0.10",
     "eslint": "^8",
     "eslint-config-next": "14.2.23",
     "postcss": "^8",
+    "prettier-plugin-prisma": "^5.0.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
